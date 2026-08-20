@@ -174,21 +174,32 @@
         }
 
         function processActionGroup(items, scoreKey) {
-            const grouped = {};
-            
-            items.forEach(item => {
-                const ticker = item.ticker;
-                if (!grouped[ticker]) {
-                    grouped[ticker] = { meta: item, offsets: {} };
-                }
-                if (item.day_offset && item.day_offset > 0) {
-                    grouped[ticker].offsets[item.day_offset] = item;
-                }
-            });
-
-            // Maintain score descending order
-            return Object.values(grouped).sort((a, b) => b.meta[scoreKey] - a.meta[scoreKey]);
+    const grouped = {};
+    
+    items.forEach(item => {
+        const ticker = item.ticker;
+        if (!grouped[ticker]) {
+            grouped[ticker] = { meta: null, offsets: {} };
         }
+        
+        // If it's the base record (offset 0), store as primary meta
+        if (item.day_offset === 0) {
+            grouped[ticker].meta = item;
+        } else if (item.day_offset > 0) {
+            // Store offset evaluation data
+            grouped[ticker].offsets[item.day_offset] = item;
+            
+            // Fallback meta if offset 0 record was missing
+            if (!grouped[ticker].meta) {
+                grouped[ticker].meta = item;
+            }
+        }
+    });
+
+    return Object.values(grouped)
+        .filter(entry => entry.meta !== null)
+        .sort((a, b) => (b.meta[scoreKey] || 0) - (a.meta[scoreKey] || 0));
+}
 
         function formatPrice(val) {
     if (val === null || val === undefined || isNaN(val)) return '-';
