@@ -234,8 +234,10 @@
                             : '<span class="badge badge-danger">✗</span>';
                             
                         const execPrice = Number(off.exec_price).toFixed(2);
+                        const actOpen = Number(off.actual_open).toFixed(2);
                         const actHigh = Number(off.actual_high).toFixed(2);
                         const actLow = Number(off.actual_low).toFixed(2);
+                        const actClose = Number(off.actual_close).toFixed(2);
 
                         rowHtml += `
                             <td>
@@ -243,7 +245,7 @@
                                     <strong>$${execPrice}</strong> ${statusBadge}
                                 </div>
                                 <div class="hl-sub">
-                                    (H ${actHigh}, L ${actLow})
+                                    (O ${actOpen}, H ${actHigh}, L ${actLow}, C ${actClose})
                                 </div>
                             </td>
                         `;
