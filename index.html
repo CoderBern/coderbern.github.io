@@ -87,7 +87,7 @@
         </div>
     </div>
 
-    <script>
+<script>
         let allData = [];
 
         // Fetch JSON on initial page load
@@ -134,14 +134,12 @@
             const grouped = {};
             
             items.forEach(item => {
-                if (!grouped[item.ticker]) {
-                    grouped[item.ticker] = {
-                        meta: item,
-                        offsets: {}
-                    };
+                const ticker = item.ticker;
+                if (!grouped[ticker]) {
+                    grouped[ticker] = { meta: item, offsets: {} };
                 }
                 if (item.day_offset && item.day_offset > 0) {
-                    grouped[item.ticker].offsets[item.day_offset] = item;
+                    grouped[ticker].offsets[item.day_offset] = item;
                 }
             });
 
@@ -159,37 +157,50 @@
 
             items.forEach((item, idx) => {
                 const tr = document.createElement('tr');
-                const score = item.meta.buy_score !== undefined && item.meta.action === 'BUY' 
+                
+                const score = (item.meta.buy_score !== undefined && item.meta.action === 'BUY') 
                     ? item.meta.buy_score 
                     : item.meta.sell_score;
+                
+                const rank = idx + 1;
+                const ticker = item.meta.ticker;
+                const company = item.meta.company_name;
+                const indKey = item.meta.industry_key || 'N/A';
+                const closePred = Number(item.meta.close_pred_date).toFixed(2);
 
                 let rowHtml = `
-                    <td class="fw-bold text-muted">${idx + 1}</td>
-                    <td><strong>${item.meta.ticker}</strong></td>
-                    <td>${item.meta.company_name}</td>
-                    <td><span class="badge bg-secondary">${item.meta.industry_key \vert{}\vert{} 'N/A'}</span></td>                     <td class="fw-bold">$${Number(item.meta.close_pred_date).toFixed(2)}</td>
+                    <td class="fw-bold text-muted">${rank}</td>
+                    <td><strong>${ticker}</strong></td>
+                    <td>${company}</td>
+                    <td><span class="badge bg-secondary">${indKey}</span></td>
+                    <td class="fw-bold">$${closePred}</td>
                     <td class="fw-bold ${scoreCssClass}">${score}</td>
                 `;
 
                 for (let day = 1; day <= 5; day++) {
                     if (item.offsets[day]) {
                         const off = item.offsets[day];
+                        
                         if (off.is_correct !== null && off.is_correct !== undefined) {
                             stats[day].t++;
                             if (off.is_correct === 1) stats[day].c++;
                         }
 
-                        const statusBadge = off.is_correct === 1 
+                        const statusBadge = (off.is_correct === 1)
                             ? '<span class="badge badge-success">✓</span>' 
                             : '<span class="badge badge-danger">✗</span>';
+                            
+                        const execPrice = Number(off.exec_price).toFixed(2);
+                        const actHigh = Number(off.actual_high).toFixed(2);
+                        const actLow = Number(off.actual_low).toFixed(2);
 
                         rowHtml += `
                             <td>
                                 <div class="price-detail">
-                                    <strong>$${Number(off.exec_price).toFixed(2)}</strong>${statusBadge}
+                                    <strong>$${execPrice}</strong> ${statusBadge}
                                 </div>
                                 <div class="hl-sub">
-                                    (H ${Number(off.actual_high).toFixed(2)}, L${Number(off.actual_low).toFixed(2)})
+                                    (H ${actHigh}, L ${actLow})
                                 </div>
                             </td>
                         `;
@@ -210,10 +221,13 @@
 
             for (let day = 1; day <= 5; day++) {
                 if (stats[day].t > 0) {
-                    const pct = ((stats[day].c / stats[day].t) * 100).toFixed(1);
+                    const cCount = stats[day].c;
+                    const tCount = stats[day].t;
+                    const pct = ((cCount / tCount) * 100).toFixed(1);
+                    
                     footHtml += `
                         <td>
-                            <span class="text-dark">${stats[day].c}/${stats[day].t}</span><br>
+                            <span class="text-dark">${cCount}/${tCount}</span><br>
                             <small class="${scoreCssClass}">(${pct}%)</small>
                         </td>
                     `;
