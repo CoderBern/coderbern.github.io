@@ -41,15 +41,16 @@
         </div>
         
         <!-- Date Selector -->
-            <!-- Controls Container -->
-            <div class="d-flex align-items-center gap-3 mt-3 mt-md-0">
-                <div class="d-flex align-items-center bg-white px-3 py-1 border rounded shadow-sm">
-                    <label for="dateSelect" class="small font-monospace text-uppercase text-muted me-2 mb-0 fw-bold">Select Predictin Date:</label>
-                    <select id="dateSelect" class="form-select form-select-sm border-0 fw-bold text-primary font-monospace shadow-none" style="cursor: pointer;" onchange="renderDashboard()">
-                        <!-- Populated dynamically via JS -->
-                    </select>
-                </div>
+        <div class="row g-3 align-items-center mb-4">
+            <div class="col-auto">
+                <label for="dateSelect" class="col-form-label fw-bold">Select Prediction Date:</label>
             </div>
+            <div class="col-auto">
+                <select id="dateSelect" class="form-select fw-bold text-primary" onchange="renderDashboard()">
+                    <!-- Options populated via JS -->
+                </select>
+            </div>
+        </div>
 
         <!-- TOP 20 BUY TABLE -->
         <div class="card shadow-sm mb-5">
