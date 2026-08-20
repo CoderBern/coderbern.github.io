@@ -13,6 +13,7 @@
         .hl-sub { color: #6c757d; font-size: 0.72rem; }
         .summary-row { background-color: #f8f9fa; font-weight: bold; }
         .brand-subtitle { font-size: 0.85rem; letter-spacing: 0.5px; }
+        .formula-footnote { font-size: 0.75rem; background-color: #f8f9fa; border-left: 3px solid #6c757d; }
     </style>
 </head>
 <body class="bg-light p-4">
@@ -31,8 +32,6 @@
                     <span class="text-muted">S&amp;P 1500 Universe</span>
                 </div>
             </div>
-            
-
         </header>
 
         <!-- Short Disclaimer Banner -->
@@ -53,7 +52,7 @@
         </div>
 
         <!-- TOP 20 BUY TABLE -->
-        <div class="card shadow-sm mb-5">
+        <div class="card shadow-sm mb-2">
             <div class="card-header bg-success text-white fw-bold">Top 20 BUY Predictions</div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -66,11 +65,11 @@
                                 <th>Industry</th>
                                 <th>Close (Pred Date)</th>
                                 <th>Buy Score</th>
-                                <th>Day 1 Actual</th>
-                                <th>Day 2 Actual</th>
-                                <th>Day 3 Actual</th>
-                                <th>Day 4 Actual</th>
-                                <th>Day 5 Actual</th>
+                                <th>Day 1 Executable &amp; Actual</th>
+                                <th>Day 2 Executable &amp; Actual</th>
+                                <th>Day 3 Executable &amp; Actual</th>
+                                <th>Day 4 Executable &amp; Actual</th>
+                                <th>Day 5 Executable &amp; Actual</th>
                             </tr>
                         </thead>
                         <tbody id="buyTableBody"></tbody>
@@ -79,9 +78,13 @@
                 </div>
             </div>
         </div>
+        <!-- BUY Table Formula Footnote -->
+        <div class="formula-footnote p-2 mb-5 rounded text-muted">
+            <strong>* BUY Executable Price Formula:</strong> <code>Exec Price = High - (High - Low) × 0.25</code> | Evaluated as <strong>Correct (✓)</strong> if <code>Exec Price &gt; Close (Pred Date)</code>.
+        </div>
 
         <!-- TOP 20 SELL TABLE -->
-        <div class="card shadow-sm mb-5">
+        <div class="card shadow-sm mb-2">
             <div class="card-header bg-danger text-white fw-bold">Top 20 SELL Predictions</div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -94,11 +97,11 @@
                                 <th>Industry</th>
                                 <th>Close (Pred Date)</th>
                                 <th>Sell Score</th>
-                                <th>Day 1 Actual</th>
-                                <th>Day 2 Actual</th>
-                                <th>Day 3 Actual</th>
-                                <th>Day 4 Actual</th>
-                                <th>Day 5 Actual</th>
+                                <th>Day 1 Executable &amp; Actual</th>
+                                <th>Day 2 Executable &amp; Actual</th>
+                                <th>Day 3 Executable &amp; Actual</th>
+                                <th>Day 4 Executable &amp; Actual</th>
+                                <th>Day 5 Executable &amp; Actual</th>
                             </tr>
                         </thead>
                         <tbody id="sellTableBody"></tbody>
@@ -107,30 +110,34 @@
                 </div>
             </div>
         </div>
+        <!-- SELL Table Formula Footnote -->
+        <div class="formula-footnote p-2 mb-5 rounded text-muted" style="border-left-color: #dc3545;">
+            <strong>* SELL Executable Price Formula:</strong> <code>Exec Price = Low + (High - Low) × 0.25</code> | Evaluated as <strong>Correct (✓)</strong> if <code>Exec Price &lt; Close (Pred Date)</code>.
+        </div>
     </div>
 
     <!-- Detailed Legal Footnote -->
-<footer class="mt-5 pt-4 border-top text-muted small">
-    <div class="row">
-        <div class="col-12">
-            <h6 class="text-uppercase fw-bold text-secondary mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">Important Legal & Risk Disclosures</h6>
-            <p class="mb-2" style="font-size: 0.72rem; line-height: 1.4;">
-                <strong>1. General Informational & Educational Use Only:</strong> The data, predictions, directional indicators, scores, and historical accuracy ratios presented on this website (the "Content") are generated purely by automated quantitative algorithms and statistical models. The Content is provided strictly for academic research, backtesting verification, and educational reference. It does not constitute personal investment advice, a solicitation, or an endorsement to buy, sell, or hold any financial instrument or security.
-            </p>
-            <p class="mb-2" style="font-size: 0.72rem; line-height: 1.4;">
-                <strong>2. No Fiduciary Duty & Investment Risks:</strong> The owner, developers, and operators of this platform are not registered investment advisers, broker-dealers, or financial analysts. Trading stocks, options, and other financial securities involves substantial risk of financial loss and is not suitable for every investor. You are solely responsible for conducting independent due diligence and consulting with a licensed investment professional before making any financial decisions.
-            </p>
-            <p class="mb-2" style="font-size: 0.72rem; line-height: 1.4;">
-                <strong>3. Model Performance & Limitation of Liability:</strong> Past backtested or historical model performance is no guarantee of future results. Quantitative metrics (including price predictions, calculated execution targets, and accuracy percentages) are subject to data delay, market volatility, execution slippage, algorithmic errors, and unpredictable macroeconomic variables. Under no circumstances shall the author, host, or affiliates be liable for any direct, indirect, consequential, or incidental damages or trading losses arising from reliance on the Content.
-            </p>
-            <p class="mb-0 text-center text-secondary mt-3" style="font-size: 0.7rem;">
-                © 2026 SP1500 Quant Research. All rights reserved.
-            </p>
+    <footer class="mt-5 pt-4 border-top text-muted small">
+        <div class="row">
+            <div class="col-12">
+                <h6 class="text-uppercase fw-bold text-secondary mb-2" style="font-size: 0.75rem; letter-spacing: 0.5px;">Important Legal &amp; Risk Disclosures</h6>
+                <p class="mb-2" style="font-size: 0.72rem; line-height: 1.4;">
+                    <strong>1. General Informational &amp; Educational Use Only:</strong> The data, predictions, directional indicators, scores, and historical accuracy ratios presented on this website (the "Content") are generated purely by automated quantitative algorithms and statistical models. The Content is provided strictly for academic research, backtesting verification, and educational reference. It does not constitute personal investment advice, a solicitation, or an endorsement to buy, sell, or hold any financial instrument or security.
+                </p>
+                <p class="mb-2" style="font-size: 0.72rem; line-height: 1.4;">
+                    <strong>2. No Fiduciary Duty &amp; Investment Risks:</strong> The owner, developers, and operators of this platform are not registered investment advisers, broker-dealers, or financial analysts. Trading stocks, options, and other financial securities involves substantial risk of financial loss and is not suitable for every investor. You are solely responsible for conducting independent due diligence and consulting with a licensed investment professional before making any financial decisions.
+                </p>
+                <p class="mb-2" style="font-size: 0.72rem; line-height: 1.4;">
+                    <strong>3. Model Performance &amp; Limitation of Liability:</strong> Past backtested or historical model performance is no guarantee of future results. Quantitative metrics (including price predictions, calculated execution targets, and accuracy percentages) are subject to data delay, market volatility, execution slippage, algorithmic errors, and unpredictable macroeconomic variables. Under no circumstances shall the author, host, or affiliates be liable for any direct, indirect, consequential, or incidental damages or trading losses arising from reliance on the Content.
+                </p>
+                <p class="mb-0 text-center text-secondary mt-3" style="font-size: 0.7rem;">
+                    © 2026 SP1500 Quant Research. All rights reserved.
+                </p>
+            </div>
         </div>
-    </div>
-</footer>
+    </footer>
 
-<script>
+    <script>
         let allData = [];
 
         // Fetch JSON on initial page load
@@ -174,134 +181,133 @@
         }
 
         function processActionGroup(items, scoreKey) {
-    const grouped = {};
-    
-    items.forEach(item => {
-        const ticker = item.ticker;
-        if (!grouped[ticker]) {
-            grouped[ticker] = { meta: null, offsets: {} };
-        }
-        
-        // If it's the base record (offset 0), store as primary meta
-        if (item.day_offset === 0) {
-            grouped[ticker].meta = item;
-        } else if (item.day_offset > 0) {
-            // Store offset evaluation data
-            grouped[ticker].offsets[item.day_offset] = item;
+            const grouped = {};
             
-            // Fallback meta if offset 0 record was missing
-            if (!grouped[ticker].meta) {
-                grouped[ticker].meta = item;
-            }
-        }
-    });
+            items.forEach(item => {
+                const ticker = item.ticker;
+                if (!grouped[ticker]) {
+                    grouped[ticker] = { meta: null, offsets: {} };
+                }
+                
+                // If base record (offset 0), store as primary meta
+                if (item.day_offset === 0) {
+                    grouped[ticker].meta = item;
+                } else if (item.day_offset > 0) {
+                    // Store offset evaluation data
+                    grouped[ticker].offsets[item.day_offset] = item;
+                    
+                    // Fallback meta if offset 0 record was missing
+                    if (!grouped[ticker].meta) {
+                        grouped[ticker].meta = item;
+                    }
+                }
+            });
 
-    return Object.values(grouped)
-        .filter(entry => entry.meta !== null)
-        .sort((a, b) => (b.meta[scoreKey] || 0) - (a.meta[scoreKey] || 0));
-}
+            return Object.values(grouped)
+                .filter(entry => entry.meta !== null)
+                .sort((a, b) => (b.meta[scoreKey] || 0) - (a.meta[scoreKey] || 0));
+        }
 
         function formatPrice(val) {
-    if (val === null || val === undefined || isNaN(val)) return '-';
-    const num = Number(val);
-    return isNaN(num) ? '-' : num.toFixed(2);
-}
+            if (val === null || val === undefined || isNaN(val)) return '-';
+            const num = Number(val);
+            return isNaN(num) ? '-' : num.toFixed(2);
+        }
 
-function renderTable(tbodyId, tfootId, items, scoreCssClass) {
-    const tbody = document.getElementById(tbodyId);
-    const tfoot = document.getElementById(tfootId);
-    tbody.innerHTML = '';
-    tfoot.innerHTML = '';
+        function renderTable(tbodyId, tfootId, items, scoreCssClass) {
+            const tbody = document.getElementById(tbodyId);
+            const tfoot = document.getElementById(tfootId);
+            tbody.innerHTML = '';
+            tfoot.innerHTML = '';
 
-    const stats = { 1: { c: 0, t: 0 }, 2: { c: 0, t: 0 }, 3: { c: 0, t: 0 }, 4: { c: 0, t: 0 }, 5: { c: 0, t: 0 } };
+            const stats = { 1: { c: 0, t: 0 }, 2: { c: 0, t: 0 }, 3: { c: 0, t: 0 }, 4: { c: 0, t: 0 }, 5: { c: 0, t: 0 } };
 
-    items.forEach((item, idx) => {
-        const tr = document.createElement('tr');
-        
-        const score = (item.meta.buy_score !== undefined && item.meta.action === 'BUY') 
-            ? item.meta.buy_score 
-            : item.meta.sell_score;
-        
-        const rank = idx + 1;
-        const ticker = item.meta.ticker;
-        const company = item.meta.company_name;
-        const indKey = item.meta.industry_key || 'N/A';
-        const closePred = formatPrice(item.meta.close_pred_date);
-
-        let rowHtml = `
-            <td class="fw-bold text-muted">${rank}</td>
-            <td><strong>${ticker}</strong></td>
-            <td>${company}</td>
-            <td><span class="badge bg-secondary">${indKey}</span></td>
-            <td class="fw-bold">$${closePred}</td>
-            <td class="fw-bold ${scoreCssClass}">${score}</td>
-        `;
-
-        for (let day = 1; day <= 5; day++) {
-            if (item.offsets && item.offsets[day]) {
-                const off = item.offsets[day]; // THIS RECORD CONTAINS THE DAY'S OHLC
+            items.forEach((item, idx) => {
+                const tr = document.createElement('tr');
                 
-                if (off.is_correct !== null && off.is_correct !== undefined) {
-                    stats[day].t++;
-                    if (off.is_correct === 1) stats[day].c++;
+                const score = (item.meta.buy_score !== undefined && item.meta.action === 'BUY') 
+                    ? item.meta.buy_score 
+                    : item.meta.sell_score;
+                
+                const rank = idx + 1;
+                const ticker = item.meta.ticker;
+                const company = item.meta.company_name;
+                const indKey = item.meta.industry_key || 'N/A';
+                const closePred = formatPrice(item.meta.close_pred_date);
+
+                let rowHtml = `
+                    <td class="fw-bold text-muted">${rank}</td>
+                    <td><strong>${ticker}</strong></td>
+                    <td>${company}</td>
+                    <td><span class="badge bg-secondary">${indKey}</span></td>
+                    <td class="fw-bold">$${closePred}</td>
+                    <td class="fw-bold ${scoreCssClass}">${score}</td>
+                `;
+
+                for (let day = 1; day <= 5; day++) {
+                    if (item.offsets && item.offsets[day]) {
+                        const off = item.offsets[day];
+                        
+                        if (off.is_correct !== null && off.is_correct !== undefined) {
+                            stats[day].t++;
+                            if (off.is_correct === 1) stats[day].c++;
+                        }
+
+                        const statusBadge = (off.is_correct === 1)
+                            ? '<span class="badge badge-success">✓</span>' 
+                            : '<span class="badge badge-danger">✗</span>';
+                            
+                        const execPrice = formatPrice(off.exec_price);
+                        const actOpen = formatPrice(off.actual_open);
+                        const actHigh = formatPrice(off.actual_high);
+                        const actLow = formatPrice(off.actual_low);
+                        const actClose = formatPrice(off.actual_close);
+
+                        rowHtml += `
+                            <td>
+                                <div class="price-detail">
+                                    <strong>$${execPrice}</strong> ${statusBadge}
+                                </div>
+                                <div class="hl-sub">
+                                    (O ${actOpen}, H ${actHigh}, L ${actLow}, C ${actClose})
+                                </div>
+                            </td>
+                        `;
+                    } else {
+                        rowHtml += `<td><span class="text-muted">-</span></td>`;
+                    }
                 }
 
-                const statusBadge = (off.is_correct === 1)
-                    ? '<span class="badge badge-success">✓</span>' 
-                    : '<span class="badge badge-danger">✗</span>';
-                    
-                // Explicitly pull directly from 'off'
-                const execPrice = formatPrice(off.exec_price);
-                const actOpen = formatPrice(off.actual_open);
-                const actHigh = formatPrice(off.actual_high);
-                const actLow = formatPrice(off.actual_low);
-                const actClose = formatPrice(off.actual_close);
+                tr.innerHTML = rowHtml;
+                tbody.appendChild(tr);
+            });
 
-                rowHtml += `
-                    <td>
-                        <div class="price-detail">
-                            <strong>$${execPrice}</strong> ${statusBadge}
-                        </div>
-                        <div class="hl-sub">
-                            (O ${actOpen}, H ${actHigh}, L ${actLow}, C ${actClose})
-                        </div>
-                    </td>
-                `;
-            } else {
-                rowHtml += `<td><span class="text-muted">-</span></td>`;
-            }
-        }
-
-        tr.innerHTML = rowHtml;
-        tbody.appendChild(tr);
-    });
-
-    // Build Summary Footer Row
-    let footHtml = `
-        <tr>
-            <td colspan="6" class="text-end text-uppercase pe-3"><strong>Accuracy Ratio (Correct / Total):</strong></td>
-    `;
-
-    for (let day = 1; day <= 5; day++) {
-        if (stats[day].t > 0) {
-            const cCount = stats[day].c;
-            const tCount = stats[day].t;
-            const pct = ((cCount / tCount) * 100).toFixed(1);
-            
-            footHtml += `
-                <td>
-                    <span class="text-dark">${cCount}/${tCount}</span><br>
-                    <small class="${scoreCssClass}">(${pct}%)</small>
-                </td>
+            // Build Summary Footer Row
+            let footHtml = `
+                <tr>
+                    <td colspan="6" class="text-end text-uppercase pe-3"><strong>Accuracy Ratio (Correct / Total):</strong></td>
             `;
-        } else {
-            footHtml += `<td><span class="text-muted">-</span></td>`;
-        }
-    }
 
-    footHtml += `</tr>`;
-    tfoot.innerHTML = footHtml;
-}
+            for (let day = 1; day <= 5; day++) {
+                if (stats[day].t > 0) {
+                    const cCount = stats[day].c;
+                    const tCount = stats[day].t;
+                    const pct = ((cCount / tCount) * 100).toFixed(1);
+                    
+                    footHtml += `
+                        <td>
+                            <span class="text-dark">${cCount}/${tCount}</span><br>
+                            <small class="${scoreCssClass}">(${pct}%)</small>
+                        </td>
+                    `;
+                } else {
+                    footHtml += `<td><span class="text-muted">-</span></td>`;
+                }
+            }
+
+            footHtml += `</tr>`;
+            tfoot.innerHTML = footHtml;
+        }
     </script>
 </body>
 </html>
