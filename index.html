@@ -190,100 +190,107 @@
             return Object.values(grouped).sort((a, b) => b.meta[scoreKey] - a.meta[scoreKey]);
         }
 
-        function renderTable(tbodyId, tfootId, items, scoreCssClass) {
-            const tbody = document.getElementById(tbodyId);
-            const tfoot = document.getElementById(tfootId);
-            tbody.innerHTML = '';
-            tfoot.innerHTML = '';
+        function formatPrice(val) {
+    if (val === null || val === undefined || isNaN(val)) return '-';
+    const num = Number(val);
+    return isNaN(num) ? '-' : num.toFixed(2);
+}
 
-            const stats = { 1: { c: 0, t: 0 }, 2: { c: 0, t: 0 }, 3: { c: 0, t: 0 }, 4: { c: 0, t: 0 }, 5: { c: 0, t: 0 } };
+function renderTable(tbodyId, tfootId, items, scoreCssClass) {
+    const tbody = document.getElementById(tbodyId);
+    const tfoot = document.getElementById(tfootId);
+    tbody.innerHTML = '';
+    tfoot.innerHTML = '';
 
-            items.forEach((item, idx) => {
-                const tr = document.createElement('tr');
+    const stats = { 1: { c: 0, t: 0 }, 2: { c: 0, t: 0 }, 3: { c: 0, t: 0 }, 4: { c: 0, t: 0 }, 5: { c: 0, t: 0 } };
+
+    items.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        
+        const score = (item.meta.buy_score !== undefined && item.meta.action === 'BUY') 
+            ? item.meta.buy_score 
+            : item.meta.sell_score;
+        
+        const rank = idx + 1;
+        const ticker = item.meta.ticker;
+        const company = item.meta.company_name;
+        const indKey = item.meta.industry_key || 'N/A';
+        const closePred = formatPrice(item.meta.close_pred_date);
+
+        let rowHtml = `
+            <td class="fw-bold text-muted">${rank}</td>
+            <td><strong>${ticker}</strong></td>
+            <td>${company}</td>
+            <td><span class="badge bg-secondary">${indKey}</span></td>
+            <td class="fw-bold">$${closePred}</td>
+            <td class="fw-bold ${scoreCssClass}">${score}</td>
+        `;
+
+        for (let day = 1; day <= 5; day++) {
+            if (item.offsets && item.offsets[day]) {
+                const off = item.offsets[day]; // THIS RECORD CONTAINS THE DAY'S OHLC
                 
-                const score = (item.meta.buy_score !== undefined && item.meta.action === 'BUY') 
-                    ? item.meta.buy_score 
-                    : item.meta.sell_score;
-                
-                const rank = idx + 1;
-                const ticker = item.meta.ticker;
-                const company = item.meta.company_name;
-                const indKey = item.meta.industry_key || 'N/A';
-                const closePred = Number(item.meta.close_pred_date).toFixed(2);
-
-                let rowHtml = `
-                    <td class="fw-bold text-muted">${rank}</td>
-                    <td><strong>${ticker}</strong></td>
-                    <td>${company}</td>
-                    <td><span class="badge bg-secondary">${indKey}</span></td>
-                    <td class="fw-bold">$${closePred}</td>
-                    <td class="fw-bold ${scoreCssClass}">${score}</td>
-                `;
-
-                for (let day = 1; day <= 5; day++) {
-                    if (item.offsets[day]) {
-                        const off = item.offsets[day];
-                        
-                        if (off.is_correct !== null && off.is_correct !== undefined) {
-                            stats[day].t++;
-                            if (off.is_correct === 1) stats[day].c++;
-                        }
-
-                        const statusBadge = (off.is_correct === 1)
-                            ? '<span class="badge badge-success">✓</span>' 
-                            : '<span class="badge badge-danger">✗</span>';
-                            
-                        const execPrice = Number(off.exec_price).toFixed(2);
-                        const actOpen = Number(off.actual_open).toFixed(2);
-                        const actHigh = Number(off.actual_high).toFixed(2);
-                        const actLow = Number(off.actual_low).toFixed(2);
-                        const actClose = Number(off.actual_close).toFixed(2);
-
-                        rowHtml += `
-                            <td>
-                                <div class="price-detail">
-                                    <strong>$${execPrice}</strong> ${statusBadge}
-                                </div>
-                                <div class="hl-sub">
-                                    (O ${actOpen}, H ${actHigh}, L ${actLow}, C ${actClose})
-                                </div>
-                            </td>
-                        `;
-                    } else {
-                        rowHtml += `<td><span class="text-muted">-</span></td>`;
-                    }
+                if (off.is_correct !== null && off.is_correct !== undefined) {
+                    stats[day].t++;
+                    if (off.is_correct === 1) stats[day].c++;
                 }
 
-                tr.innerHTML = rowHtml;
-                tbody.appendChild(tr);
-            });
-
-            // Build Summary Footer Row
-            let footHtml = `
-                <tr>
-                    <td colspan="6" class="text-end text-uppercase pe-3"><strong>Accuracy Ratio (Correct / Total):</strong></td>
-            `;
-
-            for (let day = 1; day <= 5; day++) {
-                if (stats[day].t > 0) {
-                    const cCount = stats[day].c;
-                    const tCount = stats[day].t;
-                    const pct = ((cCount / tCount) * 100).toFixed(1);
+                const statusBadge = (off.is_correct === 1)
+                    ? '<span class="badge badge-success">✓</span>' 
+                    : '<span class="badge badge-danger">✗</span>';
                     
-                    footHtml += `
-                        <td>
-                            <span class="text-dark">${cCount}/${tCount}</span><br>
-                            <small class="${scoreCssClass}">(${pct}%)</small>
-                        </td>
-                    `;
-                } else {
-                    footHtml += `<td><span class="text-muted">-</span></td>`;
-                }
-            }
+                // Explicitly pull directly from 'off'
+                const execPrice = formatPrice(off.exec_price);
+                const actOpen = formatPrice(off.actual_open);
+                const actHigh = formatPrice(off.actual_high);
+                const actLow = formatPrice(off.actual_low);
+                const actClose = formatPrice(off.actual_close);
 
-            footHtml += `</tr>`;
-            tfoot.innerHTML = footHtml;
+                rowHtml += `
+                    <td>
+                        <div class="price-detail">
+                            <strong>$${execPrice}</strong> ${statusBadge}
+                        </div>
+                        <div class="hl-sub">
+                            (O ${actOpen}, H ${actHigh}, L ${actLow}, C ${actClose})
+                        </div>
+                    </td>
+                `;
+            } else {
+                rowHtml += `<td><span class="text-muted">-</span></td>`;
+            }
         }
+
+        tr.innerHTML = rowHtml;
+        tbody.appendChild(tr);
+    });
+
+    // Build Summary Footer Row
+    let footHtml = `
+        <tr>
+            <td colspan="6" class="text-end text-uppercase pe-3"><strong>Accuracy Ratio (Correct / Total):</strong></td>
+    `;
+
+    for (let day = 1; day <= 5; day++) {
+        if (stats[day].t > 0) {
+            const cCount = stats[day].c;
+            const tCount = stats[day].t;
+            const pct = ((cCount / tCount) * 100).toFixed(1);
+            
+            footHtml += `
+                <td>
+                    <span class="text-dark">${cCount}/${tCount}</span><br>
+                    <small class="${scoreCssClass}">(${pct}%)</small>
+                </td>
+            `;
+        } else {
+            footHtml += `<td><span class="text-muted">-</span></td>`;
+        }
+    }
+
+    footHtml += `</tr>`;
+    tfoot.innerHTML = footHtml;
+}
     </script>
 </body>
 </html>
