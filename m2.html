@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model 2 Prediction Evaluation Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --accent-blue: #3b82f6;
+            --border-color: #334155;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        h1 {
+            margin: 0 0 8px 0;
+            font-size: 1.75rem;
+            color: var(--text-primary);
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Notice Banner for CORS Issues */
+        #error-banner {
+            display: none;
+            background-color: #451a03;
+            border: 1px solid #78350f;
+            color: #fde68a;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        #error-banner code {
+            background-color: #27272a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #38bdf8;
+        }
+
+        /* Dashboard Grid */
+        .metrics-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .metric-card .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .metric-card .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        /* Controls Section */
+        .controls {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        select, input {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        /* Table Area */
+        .table-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: #0f172a;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #26334d;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .badge-buy { background-color: rgba(34, 197, 94, 0.2); color: var(--accent-green); }
+        .badge-sell { background-color: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .badge-correct { color: var(--accent-green); font-weight: bold; }
+        .badge-incorrect { color: var(--accent-red); font-weight: bold; }
+        .badge-index { background-color: rgba(59, 130, 246, 0.15); color: var(--accent-blue); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Model 2 (M2) Prediction Evaluation</h1>
+        <div class="subtitle">Real-time Backtest Evaluation Dashboard</div>
+    </header>
+
+    <!-- Error Banner for CORS / File Protocol -->
+    <div id-="error-banner" id="error-banner">
+        <strong>⚠️ Cannot load data via file:// protocol!</strong><br>
+        Browser security policies prevent loading <code>m2_predictions.json</code> directly from disk.<br><br>
+        <strong>Fix:</strong> Open your terminal in the <code>dist</code> directory and run:<br>
+        <code>python3 -m http.server 8000</code><br>
+        Then open: <a href="http://localhost:8000/m2.html" style="color: #38bdf8;">http://localhost:8000/m2.html</a>
+    </div>
+
+    <!-- Summary Metrics -->
+    <div class="metrics-summary">
+        <div class="metric-card">
+            <div class="label">Total Predictions</div>
+            <div class="value" id="total-count">-</div>
+        </div>
+        <div class="metric-card">
+            <div class="label">Overall Accuracy</div>
+            <div class="value" id="overall-accuracy">-</div>
+        </div>
+        <div class="metric-card">
+            <div class="label">Evaluated Days</div>
+            <div class="value" id="days-count">-</div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <select id="segment-filter">
+            <option value="ALL">All Segments (SP500/SP400/SP600)</option>
+            <option value="SP500">SP500</option>
+            <option value="SP400">SP400</option>
+            <option value="SP600">SP600</option>
+        </select>
+
+        <select id="action-filter">
+            <option value="ALL">All Actions (BUY/SELL)</option>
+            <option value="BUY">BUY</option>
+            <option value="SELL">SELL</option>
+        </select>
+
+        <input type="text" id="search-input" placeholder="Search Ticker / Company...">
+    </div>
+
+    <!-- Predictions Table -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Pred Date</th>
+                    <th>Ticker</th>
+                    <th>Index</th>
+                    <th>Company Name</th>
+                    <th>Action</th>
+                    <th>Pred Close</th>
+                    <th>Eval Date</th>
+                    <th>Exec Price</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <tr>
+                    <td colspan="9" style="text-align: center; color: var(--text-secondary);">Loading evaluation data...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    let rawData = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadPredictions();
+
+        document.getElementById('segment-filter').addEventListener('change', filterAndRender);
+        document.getElementById('action-filter').addEventListener('change', filterAndRender);
+        document.getElementById('search-input').addEventListener('input', filterAndRender);
+    });
+
+    async function loadPredictions() {
+        try {
+            // Fetch updated m2_predictions.json file
+            const response = await fetch('m2_predictions.json');
+            
+            if (!response.ok) {
+                throw new Error(`HTTP Error! Status: ${response.status}`);
+            }
+
+            rawData = await response.json();
+            renderSummary(rawData);
+            filterAndRender();
+
+        } catch (error) {
+            console.error('Error loading m2_predictions.json:', error);
+            
+            // Display friendly CORS error banner if fetch fails
+            if (window.location.protocol === 'file:') {
+                document.getElementById('error-banner').style.display = 'block';
+            }
+            
+            document.getElementById('table-body').innerHTML = `
+                <tr>
+                    <td colspan="9" style="text-align: center; color: var(--accent-red); padding: 24px;">
+                        Failed to load <code>m2_predictions.json</code>. Ensure the file exists and is served via an HTTP server.
+                    </td>
+                </tr>`;
+        }
+    }
+
+    function renderSummary(data) {
+        if (!data || data.length === 0) return;
+
+        const total = data.length;
+        const correctCount = data.filter(d => d.is_correct === 1).length;
+        const accuracy = ((correctCount / total) * 100).toFixed(1);
+        const uniqueDates = new Set(data.map(d => d.pred_date)).size;
+
+        document.getElementById('total-count').textContent = total.toLocaleString();
+        document.getElementById('overall-accuracy').textContent = `${accuracy}%`;
+        document.getElementById('days-count').textContent = uniqueDates;
+    }
+
+    function filterAndRender() {
+        const segmentValue = document.getElementById('segment-filter').value;
+        const actionValue = document.getElementById('action-filter').value;
+        const searchValue = document.getElementById('search-input').value.toUpperCase().trim();
+
+        const filtered = rawData.filter(item => {
+            const matchesSegment = segmentValue === 'ALL' || (item.index_segment && item.index_segment.includes(segmentValue));
+            const matchesAction = actionValue === 'ALL' || item.action === actionValue;
+            const matchesSearch = !searchValue || 
+                (item.ticker && item.ticker.toUpperCase().includes(searchValue)) ||
+                (item.company_name && item.company_name.toUpperCase().includes(searchValue));
+
+            return matchesSegment && matchesAction && matchesSearch;
+        });
+
+        renderTable(filtered);
+    }
+
+    function renderTable(data) {
+        const tbody = document.getElementById('table-body');
+
+        if (data.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-secondary);">No records match the current filters.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = data.slice(0, 200).map(item => `
+            <tr>
+                <td>${item.pred_date || '-'}</td>
+                <td><strong>${item.ticker || '-'}</strong></td>
+                <td><span class="badge badge-index">${item.index_segment || 'OTHER'}</span></td>
+                <td>${item.company_name || '-'}</td>
+                <td><span class="badge ${item.action === 'BUY' ? 'badge-buy' : 'badge-sell'}">${item.action || 'BUY'}</span></td>
+                <td>$${item.close_pred_date ? item.close_pred_date.toFixed(2) : '-'}</td>
+                <td>${item.eval_date || '-'}</td>
+                <td>$${item.exec_price ? item.exec_price.toFixed(2) : '-'}</td>
+                <td>
+                    ${item.is_correct === 1 
+                        ? '<span class="badge-correct">✓ Correct</span>' 
+                        : '<span class="badge-incorrect">✗ Incorrect</span>'}
+                </td>
+            </tr>
+        `).join('');
+    }
+</script>
+
+</body>
+</html>
