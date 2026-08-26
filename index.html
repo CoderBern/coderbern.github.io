@@ -19,7 +19,7 @@
 </head>
 <body class="bg-light p-4">
     <div class="container-fluid">
-        <!-- Professional Header Block -->
+        <!-- Header Block with Navigation Menu -->
         <header class="d-flex flex-wrap justify-content-between align-items-center pb-3 mb-4 border-bottom">
             <div>
                 <h1 class="h3 fw-bold text-dark mb-1">
@@ -33,6 +33,15 @@
                     <span class="text-muted">S&amp;P 1500 Universe</span>
                 </div>
             </div>
+            <!-- 相互跳转菜单导航 -->
+            <ul class="nav nav-pills mt-2 mt-md-0">
+                <li class="nav-item">
+                    <a class="nav-link active fw-bold" aria-current="page" href="index.html">Model 1 (Base)</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-secondary fw-semibold" href="m2.html">Model 2 (M2)</a>
+                </li>
+            </ul>
         </header>
 
         <!-- Short Disclaimer Banner -->
@@ -141,7 +150,6 @@
     <script>
         let allData = [];
 
-        // Fetch JSON on initial page load
         document.addEventListener('DOMContentLoaded', () => {
             fetch('predictions.json')
                 .then(response => response.json())
@@ -172,11 +180,9 @@
 
             const filtered = allData.filter(item => item.pred_date === selectedDate);
 
-            // Process BUY predictions
             const buys = processActionGroup(filtered.filter(i => i.action.toUpperCase() === 'BUY'), 'buy_score');
             renderTable('buyTableBody', 'buyTableFoot', buys, 'text-success');
 
-            // Process SELL predictions
             const sells = processActionGroup(filtered.filter(i => i.action.toUpperCase() === 'SELL'), 'sell_score');
             renderTable('sellTableBody', 'sellTableFoot', sells, 'text-danger');
         }
@@ -190,14 +196,10 @@
                     grouped[ticker] = { meta: null, offsets: {} };
                 }
                 
-                // If base record (offset 0), store as primary meta
                 if (item.day_offset === 0) {
                     grouped[ticker].meta = item;
                 } else if (item.day_offset > 0) {
-                    // Store offset evaluation data
                     grouped[ticker].offsets[item.day_offset] = item;
-                    
-                    // Fallback meta if offset 0 record was missing
                     if (!grouped[ticker].meta) {
                         grouped[ticker].meta = item;
                     }
@@ -283,7 +285,6 @@
                 tbody.appendChild(tr);
             });
 
-            // Build Summary Footer Row
             let footHtml = `
                 <tr>
                     <td colspan="6" class="text-end text-uppercase pe-3"><strong>Accuracy Ratio (Correct / Total):</strong></td>

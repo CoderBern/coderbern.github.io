@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Model 2 (M2) Prediction Accuracy Tracker | Bern-T Engine</title>
-    <!-- Bootstrap 5 CSS (保持与 index.html 完全一致) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .badge-success { background-color: #198754; color: white; padding: 3px 6px; border-radius: 4px; font-size: 0.75rem; }
@@ -20,7 +19,7 @@
 </head>
 <body class="bg-light p-4">
     <div class="container-fluid">
-        <!-- Header Block -->
+        <!-- Header Block with Navigation Menu -->
         <header class="d-flex flex-wrap justify-content-between align-items-center pb-3 mb-4 border-bottom">
             <div>
                 <h1 class="h3 fw-bold text-dark mb-1">
@@ -34,6 +33,15 @@
                     <span class="text-muted">S&amp;P 1500 Universe</span>
                 </div>
             </div>
+            <!-- 相互跳转菜单导航 -->
+            <ul class="nav nav-pills mt-2 mt-md-0">
+                <li class="nav-item">
+                    <a class="nav-link text-secondary fw-semibold" href="index.html">Model 1 (Base)</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active fw-bold" aria-current="page" href="m2.html">Model 2 (M2)</a>
+                </li>
+            </ul>
         </header>
 
         <!-- CORS Warning Banner -->
@@ -205,20 +213,16 @@
             const selectedSegment = document.getElementById('segmentSelect').value;
             if (!selectedDate) return;
 
-            // 1. 过滤日期
             let filtered = allData.filter(item => item.pred_date === selectedDate);
 
-            // 2. 过滤指数板块 (SP500 / SP400 / SP600)
             if (selectedSegment !== 'ALL') {
                 filtered = filtered.filter(item => item.index_segment && item.index_segment.includes(selectedSegment));
             }
 
-            // 3. 处理 BUY 组
             const buys = processActionGroup(filtered.filter(i => i.action && i.action.toUpperCase() === 'BUY'), 'buy_score');
             document.getElementById('buyBadgeCount').textContent = `Records: ${buys.length}`;
             renderTable('buyTableBody', 'buyTableFoot', buys, 'text-success');
 
-            // 4. 处理 SELL 组
             const sells = processActionGroup(filtered.filter(i => i.action && i.action.toUpperCase() === 'SELL'), 'sell_score');
             document.getElementById('sellBadgeCount').textContent = `Records: ${sells.length}`;
             renderTable('sellTableBody', 'sellTableFoot', sells, 'text-danger');
@@ -233,7 +237,6 @@
                     grouped[ticker] = { meta: null, offsets: {} };
                 }
                 
-                // Day Offset 0 记录为基础属性
                 if (item.day_offset === 0) {
                     grouped[ticker].meta = item;
                 } else if (item.day_offset > 0) {
@@ -330,7 +333,6 @@
                 tbody.appendChild(tr);
             });
 
-            // Footer Accuracy Ratio 汇总
             let footHtml = `
                 <tr>
                     <td colspan="7" class="text-end text-uppercase pe-3"><strong>Accuracy Ratio (Correct / Total):</strong></td>
